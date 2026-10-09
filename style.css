@@ -1,0 +1,475 @@
+:root {
+  --paper: #fcfdff;
+  --line-major: #aeb9e3;
+  --line-minor: #eef1fa;
+  --margin-line: #e0508a;
+  --ink: #2340a8;
+  --graphite: #23283a;
+  --pencil: #555b73;
+  --highlight: #ffa3cc;
+  --highlight-ink: #2340a8;
+  --shadow: rgb(35 40 58 / 0.18);
+
+  --line: 2rem;
+  --baseline: 1.4rem;
+  --margin: 7.5rem;
+  --gutter: 1rem;
+  --pad: 0.75rem;
+  /* Shrinks just enough on 360px phones to keep "La Cantoche rose" (about 9em wide) on one line. */
+  --title-size: clamp(1.125rem, (100vw - 10.25rem) / 9.2, 1.375rem);
+  --week-size: 0.9375rem;
+  /* Shrinks with the screen so the longest day title, "Mercredi 30 septembre", stays on one line. */
+  --day-size: clamp(1rem, (100vw - 10.25rem) / 12.5, 1.3125rem);
+
+  --hand: "Playwrite FR Moderne", "Segoe Print", "Bradley Hand", cursive;
+  --text: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+
+/* data-theme is set before the first paint by the script in index.html, from the theme button or the system. */
+:root[data-theme="dark"] {
+  --paper: #141a2e;
+  --line-major: #2f3a62;
+  --line-minor: #1a2139;
+  --margin-line: #f07fb0;
+  --ink: #a9bcff;
+  --graphite: #e6e9f5;
+  --pencil: #b4bbd6;
+  --highlight: #702553;
+  --highlight-ink: #ffb8d8;
+  --shadow: rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --margin: 9rem;
+    --gutter: 2rem;
+    --title-size: 1.75rem;
+    --week-size: 1.0625rem;
+    --day-size: 1.3125rem;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--graphite);
+  font: 1.0625rem / var(--line) var(--text);
+}
+
+/* The masthead repeats the page ruling so it looks unchanged until the page scrolls under it. */
+body,
+.masthead {
+  background-color: var(--paper);
+  /* Seyès ruling: a strong line every --line, three faint ones between, faint verticals. */
+  background-image:
+    linear-gradient(to bottom, var(--line-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line-minor) 1px, transparent 1px),
+    linear-gradient(to right, var(--line-minor) 1px, transparent 1px);
+  background-size:
+    100% var(--line),
+    100% calc(var(--line) / 4),
+    var(--line) 100%;
+  background-position:
+    0 var(--baseline),
+    0 var(--baseline),
+    0 0;
+}
+
+h1, h2, p, dl, dd {
+  margin: 0;
+}
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.masthead.scrolled {
+  box-shadow: 0 1px 0 var(--line-major), 0 0.25rem 0.75rem var(--shadow);
+}
+
+/* The bottom padding is a blank ruled line that holds the ruler once the page scrolls. */
+.masthead > .sheet {
+  padding-block: calc(var(--line) / 2) var(--line);
+}
+
+/* A school ruler. Its centimetres are pink bars as wide as the margin line, and its zero continues that line. */
+.masthead > .sheet::after {
+  --mark: linear-gradient(to right, var(--ink) 1px, transparent 1px);
+  --cm: linear-gradient(to right, var(--margin-line) 2px, transparent 2px);
+  --zero: calc(var(--gutter) + var(--margin));
+  content: "";
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 1.375rem;
+  background:
+    var(--cm) var(--zero) 0 / 40px 70% repeat-x,
+    var(--mark) var(--zero) 0 / 20px 45% repeat-x,
+    var(--mark) var(--zero) 0 / 4px 25% repeat-x,
+    color-mix(in srgb, var(--ink) 12%, var(--paper));
+  border-block: 1px solid color-mix(in srgb, var(--ink) 45%, var(--paper));
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 0.25rem 0.5rem var(--shadow);
+  pointer-events: none;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Room after the footer so the last day can scroll up to the ruler. Sized on the large viewport (lvh) so a phone's
+   address bar showing or hiding never changes it. app.js measures --last-day-to-end. */
+.page {
+  flex: 1;
+  padding-bottom: max(var(--line) * 2, 100lvh - var(--masthead-height, 0px) - var(--last-day-to-end, 100lvh));
+}
+
+.sheet::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: calc(var(--gutter) + var(--margin));
+  width: 2px;
+  background: var(--margin-line);
+}
+
+.indent {
+  padding-left: calc(var(--margin) + var(--pad));
+}
+
+h1 {
+  font-family: var(--hand);
+  font-size: var(--title-size);
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.subtitle {
+  color: var(--pencil);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.school-row {
+  display: flex;
+  align-items: center;
+  height: var(--line);
+  margin-bottom: calc(var(--line) / 2);
+}
+
+/* The margin part of the row: the theme button, right-aligned above the week arrows. It shrinks so the toggle
+   slides left rather than overflow on very narrow screens. */
+.school-row-start {
+  display: flex;
+  flex: 0 1 calc(var(--margin) + var(--pad));
+  justify-content: flex-end;
+  padding-right: calc(var(--pad) * 2);
+}
+
+.github-link {
+  flex: none;
+  margin-left: auto;
+}
+
+:root[data-theme="dark"] .icon-moon,
+:root:not([data-theme="dark"]) .icon-sun {
+  display: none;
+}
+
+.school-toggle {
+  display: flex;
+  flex: none;
+  margin: 0 0.5rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.school-toggle label {
+  position: relative;
+  cursor: pointer;
+}
+
+.school-toggle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.school-toggle span {
+  display: block;
+  height: 1.75rem;
+  padding-inline: 0.75rem;
+  font-size: 0.9375rem;
+  line-height: calc(1.75rem - 3px);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+}
+
+.school-toggle label:first-of-type span {
+  border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.school-toggle label:last-of-type span {
+  border-left: 0;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+@media (hover: hover) {
+  .school-toggle label:hover span {
+    background: var(--line-minor);
+  }
+}
+
+.school-toggle input:checked + span {
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.school-toggle input:focus-visible + span {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.week-nav {
+  display: grid;
+  grid-template-columns: var(--margin) 1fr;
+}
+
+.week-buttons {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: var(--pad);
+}
+
+.week-label {
+  padding-left: var(--pad);
+  font-size: var(--week-size);
+  font-weight: 700;
+}
+
+.week-nav .text-button {
+  grid-column: 2;
+  justify-self: start;
+  margin-left: var(--pad);
+}
+
+button {
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 0.375rem;
+}
+
+@media (hover: hover) {
+  .icon-button:hover:not(:disabled) {
+    color: var(--paper);
+    background: var(--ink);
+  }
+}
+
+.icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Three quarters down the part of the screen below the masthead, never closer to the bottom than the gutter
+   (3rem is half its height). app.js keeps --masthead-height current. */
+.day-nav {
+  position: fixed;
+  top: min(75% + var(--masthead-height, 0px) / 4, 100% - var(--gutter) - 3rem);
+  right: var(--gutter);
+  z-index: 2;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.day-nav .icon-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  box-shadow: 0 0.25rem 0.75rem var(--shadow);
+}
+
+.icon-button svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-button svg.icon-filled {
+  fill: currentColor;
+  stroke: none;
+}
+
+.day-nav svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.text-button {
+  height: var(--line);
+  padding: 0;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.status-row:has(#status:not(:empty)) {
+  margin-top: var(--line);
+}
+
+#status {
+  color: var(--pencil);
+}
+
+/* scroll-margin-top is read by app.js as the space left under the ruler when scrolling to a day. */
+.day {
+  margin-top: var(--line);
+  scroll-margin-top: calc(var(--line) / 2);
+}
+
+h2 {
+  font-family: var(--hand);
+  font-size: var(--day-size);
+  font-weight: 400;
+  color: var(--ink);
+}
+
+/* A hand-highlighted word: today's date, and "rose" in the title as a reminder of it.
+   It bleeds left so the text keeps its place. */
+.marker {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  margin-left: -0.3em;
+  padding-inline: 0.3em;
+  color: var(--highlight-ink);
+}
+
+/* In the title the stroke starts just before "rose" instead of covering the space after "Cantoche",
+   and adds no width so the title still fits on one line. */
+h1 .marker {
+  margin-left: -0.12em;
+  padding-inline: 0.12em 0;
+}
+
+/* A pink felt-tip pass: slightly tilted, with ragged, see-through ends where the pen lands and lifts.
+   Solid under the text so the ruling never crosses the digits. 1.2em tall around the line's middle,
+   it covers the letter bodies and most ascenders of the handwriting font. */
+.marker::before {
+  content: "";
+  position: absolute;
+  inset: calc(50% - 0.6em) -0.15em calc(50% - 0.6em) 0;
+  z-index: -1;
+  border-radius: 0.5em 0.2em 0.45em 0.15em / 0.3em 0.5em 0.25em 0.45em;
+  background: linear-gradient(to right,
+    color-mix(in srgb, var(--highlight) 65%, transparent),
+    var(--highlight) 0.5em calc(100% - 0.5em),
+    color-mix(in srgb, var(--highlight) 60%, transparent));
+  transform: rotate(-1deg);
+  animation: highlight-stroke 0.5s 0.3s ease-out backwards;
+}
+
+@keyframes highlight-stroke {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker::before {
+    animation: none;
+  }
+}
+
+.course {
+  display: grid;
+  grid-template-columns: var(--margin) 1fr;
+}
+
+dt {
+  grid-column: 1;
+  padding-right: var(--pad);
+  text-align: right;
+  font-size: 0.875rem;
+  color: var(--pencil);
+}
+
+/* Hanging indent: a wrapped dish must not read as the next dish. */
+dd {
+  grid-column: 2;
+  padding-left: calc(var(--pad) + 1rem);
+  text-indent: -1rem;
+  font-weight: 500;
+}
+
+.or {
+  font-style: italic;
+  color: var(--pencil);
+}
+
+footer {
+  margin-top: calc(var(--line) * 2);
+  font-size: 0.875rem;
+  color: var(--pencil);
+}
+
+footer a {
+  color: var(--ink);
+}
