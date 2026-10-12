@@ -21,4 +21,4 @@ python3 -m http.server     # optional local server, then open http://localhost:8
 ## Deployment
 
 Every push to `main` runs [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which runs the tests,
-then publishes only `index.html`, `style.css`, `menu.js` and `app.js` to GitHub Pages.
+then publishes only `index.html`, `style.css`, `menu.js`, `app.js`, `favicon.svg` and `og-image.png` to GitHub Pages.

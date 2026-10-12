@@ -57,7 +57,6 @@
 
   function showSchoolName() {
     ui.schoolName.textContent = SCHOOL_NAMES[school];
-    document.title = `La Cantoche rose, menu des écoles ${SCHOOL_NAMES[school]} de Toulouse`;
   }
 
   function setStatus(message, canRetry = false) {
